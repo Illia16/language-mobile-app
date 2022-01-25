@@ -1,0 +1,35 @@
+Resources:
+  Table:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: id
+          KeyType: "HASH"
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      ProvisionedThroughput:
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+      TableName: languageAppIn
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
+Outputs:
+  TableArn:
+    Description: The ARN for the Table
+    Value:
+      'Fn::GetAtt':
+        - Table
+        - Arn
+    Export:
+      Name: dynamodb-language-app-table
+  StreamArn:
+    Description: The ARN for the Event Stream
+    Value:
+      'Fn::GetAtt': [Table, StreamArn]
+    Export:
+      Name: dynamodb-language-app-stream
+

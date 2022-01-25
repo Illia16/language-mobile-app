@@ -1,0 +1,49 @@
+service: cf-language-app
+
+plugins:
+  - '@silvermine/serverless-plugin-cloudfront-lambda-edge'
+
+provider:
+  name: aws
+  stage: prod
+  region: us-east-1
+  profile: personal
+  apiGateway:
+    restApiId:
+      Ref: LanguageAppApiGW
+    restApiRootResourceId:
+      Fn::GetAtt:
+        - LanguageAppApiGW
+        - RootResourceId
+  deploymentBucket:
+    name: serverless-deployment-bucket-illia-us-east-1
+  runtime: nodejs14.x
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Resource:
+            - 'Fn::GetAtt':
+                - Table
+                - Arn
+          Action:
+            - 'dynamodb:Scan'
+            - 'dynamodb:PutItem'
+            - 'dynamodb:GetItem'
+
+resources:
+  - ${file(api-geteway/dist.yml)}
+  - ${file(dynamodb/dist.yml)}
+
+functions:
+  getTable:
+    name: LanguageApp
+    handler: api/getTable/index.handler
+    description: getTable
+    memorySize: 128
+    timeout: 5
+    events:
+      - http:
+          path: api/getTable
+          method: get
+          cors: true

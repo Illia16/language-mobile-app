@@ -1,0 +1,20 @@
+Resources:
+  LanguageAppApiGW:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: languageAppApiwGW
+
+Outputs:
+  apiGatewayRestApiId:
+    Value:
+      Ref: LanguageAppApiGW
+    Export:
+      Name: languageAppRestApiId
+
+  apiGatewayRestApiRootResourceId:
+    Value:
+      Fn::GetAtt:
+        - LanguageAppApiGW
+        - RootResourceId
+    Export:
+      Name: languageAppApiRootId

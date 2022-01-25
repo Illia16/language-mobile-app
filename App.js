@@ -7,9 +7,9 @@ export default function App() {
     try {
       await fetch("URL", {
         method: "GET",
-		headers: {
-            "x-api-key": 'KEY',
-		}
+        headers: {
+                "x-api-key": 'KEY',
+        }
       })
         .then((res) => res.json())
         .then((data) => {
