@@ -5,11 +5,8 @@ export default function App() {
   const fetchData = async () => {
 
     try {
-      await fetch("URL", {
+      await fetch("getUrl", {
         method: "GET",
-        headers: {
-                "x-api-key": 'KEY',
-        }
       })
         .then((res) => res.json())
         .then((data) => {
@@ -20,13 +17,33 @@ export default function App() {
     }
   };
 
+
+  const postData = async () => {
+    try {
+        fetch("postURL", {
+          method: 'POST',
+          body: JSON.stringify({moves: String(99), time: String(98), id: 'some-test-id-2', name: 'test-name'})
+        })
+        .then(res => res.json())
+        .then(data => {
+          console.log('data from post',data);
+        })
+      } catch (er) {
+        console.error(er);
+      }
+  };
+
   return (
     <View style={styles.container}>
-      <Text>Hi there! 25 Jan</Text>
+      <Text>Hi there! Originally creted on: 25 Jan</Text>
       <StatusBar style="auto" />
 
-      <TouchableOpacity onPress={fetchData} style={{ backgroundColor: "blue" }}>
-        <Text style={{ fontSize: 20, color: "#fff" }}>Fetch the data</Text>
+      <TouchableOpacity onPress={fetchData} style={{ backgroundColor: "blue", marginTop: 10 }}>
+        <Text style={{ fontSize: 20, color: "#fff", padding: 10 }}>Get the data</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={postData} style={{ backgroundColor: "blue", marginTop: 10 }}>
+        <Text style={{ fontSize: 20, color: "#fff", padding: 10 }}>Post the data</Text>
       </TouchableOpacity>
     </View>
   );

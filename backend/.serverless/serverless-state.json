@@ -166,7 +166,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-deployment-bucket-illia-us-east-1",
-                "S3Key": "serverless/cf-language-app/prod/1643155555938-2022-01-26T00:05:55.938Z/cf-language-app.zip"
+                "S3Key": "serverless/cf-language-app/prod/1643161279246-2022-01-26T01:41:19.246Z/cf-language-app.zip"
               },
               "Handler": "api/getItem/index.handler",
               "Runtime": "nodejs14.x",
@@ -190,7 +190,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-deployment-bucket-illia-us-east-1",
-                "S3Key": "serverless/cf-language-app/prod/1643155555938-2022-01-26T00:05:55.938Z/cf-language-app.zip"
+                "S3Key": "serverless/cf-language-app/prod/1643161279246-2022-01-26T01:41:19.246Z/cf-language-app.zip"
               },
               "Handler": "api/postItem/index.handler",
               "Runtime": "nodejs14.x",
@@ -452,7 +452,7 @@
               "PostItemLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1643155554277": {
+          "ApiGatewayDeployment1643161276295": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -863,7 +863,7 @@
     "artifact": "/Users/inikitin/Documents/SideProjects/language-mobile-app/backend/.serverless/cf-language-app.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/cf-language-app/prod/1643155555938-2022-01-26T00:05:55.938Z",
+    "artifactDirectoryName": "serverless/cf-language-app/prod/1643161279246-2022-01-26T01:41:19.246Z",
     "artifact": "cf-language-app.zip"
   }
 }
