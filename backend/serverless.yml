@@ -37,13 +37,24 @@ resources:
 
 functions:
   getTable:
-    name: LanguageApp
-    handler: api/getTable/index.handler
-    description: getTable
+    name: language-app-get-item
+    handler: api/getItem/index.handler
+    description: get item from the dynamodb table
     memorySize: 128
     timeout: 5
     events:
       - http:
-          path: api/getTable
+          path: api/getItem
           method: get
+          cors: true
+  postItem:
+    name: language-app-post-item
+    handler: api/postItem/index.handler
+    description: post item to the dynamodb table
+    memorySize: 128
+    timeout: 5
+    events:
+      - http:
+          path: api/postItem
+          method: post
           cors: true

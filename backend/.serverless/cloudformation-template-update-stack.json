@@ -5,7 +5,13 @@
     "GetTableLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/LanguageApp"
+        "LogGroupName": "/aws/lambda/language-app-get-item"
+      }
+    },
+    "PostItemLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/language-app-post-item"
       }
     },
     "IamRoleLambdaExecution": {
@@ -51,7 +57,10 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/LanguageApp:*"
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/language-app-get-item:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/language-app-post-item:*"
                     }
                   ]
                 },
@@ -62,7 +71,10 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/LanguageApp:*:*"
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/language-app-get-item:*:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/language-app-post-item:*:*"
                     }
                   ]
                 },
@@ -117,14 +129,14 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-deployment-bucket-illia-us-east-1",
-          "S3Key": "serverless/cf-language-app/prod/1643155063076-2022-01-25T23:57:43.076Z/cf-language-app.zip"
+          "S3Key": "serverless/cf-language-app/prod/1643155555938-2022-01-26T00:05:55.938Z/cf-language-app.zip"
         },
-        "Handler": "api/getTable/index.handler",
+        "Handler": "api/getItem/index.handler",
         "Runtime": "nodejs14.x",
-        "FunctionName": "LanguageApp",
+        "FunctionName": "language-app-get-item",
         "MemorySize": 128,
         "Timeout": 5,
-        "Description": "getTable",
+        "Description": "get item from the dynamodb table",
         "Role": {
           "Fn::GetAtt": [
             "IamRoleLambdaExecution",
@@ -136,15 +148,50 @@
         "GetTableLogGroup"
       ]
     },
-    "GetTableLambdaVersion6pWPU7T9WZXnRrB4qZOiqGgyfxKpDxiwUKISV9pnms": {
+    "PostItemLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-deployment-bucket-illia-us-east-1",
+          "S3Key": "serverless/cf-language-app/prod/1643155555938-2022-01-26T00:05:55.938Z/cf-language-app.zip"
+        },
+        "Handler": "api/postItem/index.handler",
+        "Runtime": "nodejs14.x",
+        "FunctionName": "language-app-post-item",
+        "MemorySize": 128,
+        "Timeout": 5,
+        "Description": "post item to the dynamodb table",
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "PostItemLogGroup"
+      ]
+    },
+    "GetTableLambdaVersionf2x2M0SmTJE59YI4kYyXcSEXNQRTHd7IiKRLl7M": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetTableLambdaFunction"
         },
-        "CodeSha256": "xcuSs9r/pWsxFnLAPqxaCUR8oVvBjTgLky2nMpVHQns=",
-        "Description": "getTable"
+        "CodeSha256": "Z9NB6HJg5fBGfpgGC/07Fql4z0/7xv6/SW2tszO8D4A=",
+        "Description": "get item from the dynamodb table"
+      }
+    },
+    "PostItemLambdaVersionhhYmrqkBxH36SrfWk5zwiJNM7RO8S8a0vejYqwzNtQA": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "PostItemLambdaFunction"
+        },
+        "CodeSha256": "Z9NB6HJg5fBGfpgGC/07Fql4z0/7xv6/SW2tszO8D4A=",
+        "Description": "post item to the dynamodb table"
       }
     },
     "ApiGatewayResourceApi": {
@@ -162,19 +209,31 @@
         }
       }
     },
-    "ApiGatewayResourceApiGettable": {
+    "ApiGatewayResourceApiGetitem": {
       "Type": "AWS::ApiGateway::Resource",
       "Properties": {
         "ParentId": {
           "Ref": "ApiGatewayResourceApi"
         },
-        "PathPart": "getTable",
+        "PathPart": "getItem",
         "RestApiId": {
           "Ref": "LanguageAppApiGW"
         }
       }
     },
-    "ApiGatewayMethodApiGettableOptions": {
+    "ApiGatewayResourceApiPostitem": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceApi"
+        },
+        "PathPart": "postItem",
+        "RestApiId": {
+          "Ref": "LanguageAppApiGW"
+        }
+      }
+    },
+    "ApiGatewayMethodApiGetitemOptions": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
         "AuthorizationType": "NONE",
@@ -212,20 +271,65 @@
           ]
         },
         "ResourceId": {
-          "Ref": "ApiGatewayResourceApiGettable"
+          "Ref": "ApiGatewayResourceApiGetitem"
         },
         "RestApiId": {
           "Ref": "LanguageAppApiGW"
         }
       }
     },
-    "ApiGatewayMethodApiGettableGet": {
+    "ApiGatewayMethodApiPostitemOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+              },
+              "ResponseTemplates": {
+                "application/json": ""
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceApiPostitem"
+        },
+        "RestApiId": {
+          "Ref": "LanguageAppApiGW"
+        }
+      }
+    },
+    "ApiGatewayMethodApiGetitemGet": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
         "HttpMethod": "GET",
         "RequestParameters": {},
         "ResourceId": {
-          "Ref": "ApiGatewayResourceApiGettable"
+          "Ref": "ApiGatewayResourceApiGetitem"
         },
         "RestApiId": {
           "Ref": "LanguageAppApiGW"
@@ -265,7 +369,53 @@
         "GetTableLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1643155061432": {
+    "ApiGatewayMethodApiPostitemPost": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "POST",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceApiPostitem"
+        },
+        "RestApiId": {
+          "Ref": "LanguageAppApiGW"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "PostItemLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      },
+      "DependsOn": [
+        "PostItemLambdaPermissionApiGateway"
+      ]
+    },
+    "ApiGatewayDeployment1643155554277": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -274,8 +424,10 @@
         "StageName": "prod"
       },
       "DependsOn": [
-        "ApiGatewayMethodApiGettableOptions",
-        "ApiGatewayMethodApiGettableGet"
+        "ApiGatewayMethodApiGetitemOptions",
+        "ApiGatewayMethodApiPostitemOptions",
+        "ApiGatewayMethodApiGetitemGet",
+        "ApiGatewayMethodApiPostitemPost"
       ]
     },
     "GetTableLambdaPermissionApiGateway": {
@@ -284,6 +436,43 @@
         "FunctionName": {
           "Fn::GetAtt": [
             "GetTableLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "LanguageAppApiGW"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "PostItemLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "PostItemLambdaFunction",
             "Arn"
           ]
         },
@@ -361,10 +550,19 @@
     "GetTableLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetTableLambdaVersion6pWPU7T9WZXnRrB4qZOiqGgyfxKpDxiwUKISV9pnms"
+        "Ref": "GetTableLambdaVersionf2x2M0SmTJE59YI4kYyXcSEXNQRTHd7IiKRLl7M"
       },
       "Export": {
         "Name": "sls-cf-language-app-prod-GetTableLambdaFunctionQualifiedArn"
+      }
+    },
+    "PostItemLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "PostItemLambdaVersionhhYmrqkBxH36SrfWk5zwiJNM7RO8S8a0vejYqwzNtQA"
+      },
+      "Export": {
+        "Name": "sls-cf-language-app-prod-PostItemLambdaFunctionQualifiedArn"
       }
     },
     "ServiceEndpoint": {
