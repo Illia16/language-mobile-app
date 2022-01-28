@@ -3,7 +3,7 @@ const dynamoDB = new AWS.DynamoDB({ region: 'us-east-1', apiVersion: '2012-08-10
 const { handler: getData } = require('../getItem/index.js')
 
 exports.handler = async (event) => {
-    const postData = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         const parsedBody = JSON.parse(event.body);
         dynamoDB.putItem({
             TableName: "languageAppIn",
@@ -21,6 +21,4 @@ exports.handler = async (event) => {
             }
         })
     });
-
-    return postData;
 }

@@ -129,7 +129,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-deployment-bucket-illia-us-east-1",
-          "S3Key": "serverless/cf-language-app/prod/1643337225900-2022-01-28T02:33:45.900Z/cf-language-app.zip"
+          "S3Key": "serverless/cf-language-app/prod/1643345540675-2022-01-28T04:52:20.675Z/cf-language-app.zip"
         },
         "Handler": "api/getItem/index.handler",
         "Runtime": "nodejs14.x",
@@ -153,7 +153,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-deployment-bucket-illia-us-east-1",
-          "S3Key": "serverless/cf-language-app/prod/1643337225900-2022-01-28T02:33:45.900Z/cf-language-app.zip"
+          "S3Key": "serverless/cf-language-app/prod/1643345540675-2022-01-28T04:52:20.675Z/cf-language-app.zip"
         },
         "Handler": "api/postItem/index.handler",
         "Runtime": "nodejs14.x",
@@ -172,25 +172,25 @@
         "PostItemLogGroup"
       ]
     },
-    "GetTableLambdaVersionHAnOb3q7JLxp9ovshXqKrzbeTOkMJR88mx6gM5gEE": {
+    "GetTableLambdaVersionyu4VtOzbx9f4pXUn25uOk1tUAfgANI5q34QFTkGVE": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetTableLambdaFunction"
         },
-        "CodeSha256": "hVp2boIiyngWJ2svjEmUfEm+HWPpKgUxLwn/s+YVAeQ=",
+        "CodeSha256": "um8vI50PYzhjvli+XNToXsoA7yLSq/C9nztZUaMr2GE=",
         "Description": "get item from the dynamodb table"
       }
     },
-    "PostItemLambdaVersionEzdd0c2TkUB0fKyCqXD3jFnjGiNFDow6XQIRLKEGXQ": {
+    "PostItemLambdaVersionMflzxjKxuUnbLZzlHyk8nfoVOdb0QhAbdza59q14bI": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "PostItemLambdaFunction"
         },
-        "CodeSha256": "hVp2boIiyngWJ2svjEmUfEm+HWPpKgUxLwn/s+YVAeQ=",
+        "CodeSha256": "um8vI50PYzhjvli+XNToXsoA7yLSq/C9nztZUaMr2GE=",
         "Description": "post item to the dynamodb table"
       }
     },
@@ -415,7 +415,7 @@
         "PostItemLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1643337221696": {
+    "ApiGatewayDeployment1643345535397": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -550,7 +550,7 @@
     "GetTableLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetTableLambdaVersionHAnOb3q7JLxp9ovshXqKrzbeTOkMJR88mx6gM5gEE"
+        "Ref": "GetTableLambdaVersionyu4VtOzbx9f4pXUn25uOk1tUAfgANI5q34QFTkGVE"
       },
       "Export": {
         "Name": "sls-cf-language-app-prod-GetTableLambdaFunctionQualifiedArn"
@@ -559,7 +559,7 @@
     "PostItemLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PostItemLambdaVersionEzdd0c2TkUB0fKyCqXD3jFnjGiNFDow6XQIRLKEGXQ"
+        "Ref": "PostItemLambdaVersionMflzxjKxuUnbLZzlHyk8nfoVOdb0QhAbdza59q14bI"
       },
       "Export": {
         "Name": "sls-cf-language-app-prod-PostItemLambdaFunctionQualifiedArn"

@@ -5,7 +5,7 @@ const dynamoDB = new AWS.DynamoDB({
 });
 
 exports.handler = async () => {
-    const getData = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         dynamoDB.scan({ TableName: "languageAppIn" }, (err, data) => {
             if (err) {
                 reject(err);
@@ -27,6 +27,4 @@ exports.handler = async () => {
         }
       });
     });
-
-    return getData;
 };
