@@ -6,7 +6,8 @@
     "deploy": "serverless deploy"
   },
   "devDependencies": {
-    "@silvermine/serverless-plugin-cloudfront-lambda-edge": "^2.2.3"
+    "@silvermine/serverless-plugin-cloudfront-lambda-edge": "^2.2.3",
+    "serverless-offline": "^8.4.0"
   },
   "dependencies": {
     "aws-sdk": "^2.1064.0"

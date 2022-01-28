@@ -2,6 +2,7 @@ service: cf-language-app
 
 plugins:
   - '@silvermine/serverless-plugin-cloudfront-lambda-edge'
+  - 'serverless-offline'
 
 provider:
   name: aws
