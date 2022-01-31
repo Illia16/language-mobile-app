@@ -1,19 +1,8 @@
-const AWS = require("aws-sdk");
-var dynamoDB = new AWS.DynamoDB.DocumentClient();
+const { helpers } = require('../helper/index.js')
 
 exports.handler = async () => {
     try {
-        const res = await dynamoDB.scan({TableName: "languageAppIn"}).promise();
-        const response = {
-            statusCode: 200,
-            body: JSON.stringify(res.Items),
-            headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Credentials": true,
-            },
-        };
-
-        return response;
+        return helpers.getData("languageAppIn");
     } catch (er) {
         return er;
     }

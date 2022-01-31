@@ -1,21 +1,18 @@
-const AWS = require('aws-sdk')
-var dynamoDB = new AWS.DynamoDB.DocumentClient();
-const { handler: getData } = require('../getItem/index.js')
+const { helpers } = require('../helper/index.js')
 
 exports.handler = async (event) => {
     const parsedBody = JSON.parse(event.body);
     try {
-        await dynamoDB.put({
-            TableName: "languageAppIn",
-            Item : {
-                "level": parsedBody.level,
-                "wordChar": parsedBody.wordChar,
-                "wordPinyin": parsedBody.wordPinyin,
-                "wordEng": parsedBody.wordEng,
-                "id": parsedBody.id,
-            },
-        }).promise();
-        return getData();
+        await helpers.postData("languageAppIn", {
+            "level": parsedBody.level,
+            "wordChar": parsedBody.wordChar,
+            "wordPinyin": parsedBody.wordPinyin,
+            "wordEng": parsedBody.wordEng,
+            "id": parsedBody.id,
+        });
+
+        const updatedData = await helpers.getData("languageAppIn");
+        return updatedData;
     } catch (er) {
         return er;
     }
