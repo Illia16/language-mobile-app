@@ -8,9 +8,10 @@ exports.handler = async (event) => {
         await dynamoDB.putItem({
             TableName: "languageAppIn",
             Item : {
-                "time": {N: parsedBody.time},
-                "moves": {N: parsedBody.moves},
-                "name": {S: parsedBody.name},
+                "level": {N: parsedBody.level},
+                "wordChar": {S: parsedBody.wordChar},
+                "wordPinyin": {S: parsedBody.wordPinyin},
+                "wordEng": {S: parsedBody.wordEng},
                 "id": {S: parsedBody.id}
             },
         }).promise();

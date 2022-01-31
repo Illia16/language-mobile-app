@@ -37,7 +37,7 @@
               ],
               "Action": [
                 "dynamodb:Scan",
-                "dynamodb:UpdateItem",
+                "dynamodb:PutItem",
                 "dynamodb:GetItem"
               ]
             }
@@ -166,7 +166,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-deployment-bucket-illia-us-east-1",
-                "S3Key": "serverless/cf-language-app/prod/1643386784418-2022-01-28T16:19:44.418Z/cf-language-app.zip"
+                "S3Key": "serverless/cf-language-app/prod/1643594707520-2022-01-31T02:05:07.520Z/cf-language-app.zip"
               },
               "Handler": "api/getItem/index.handler",
               "Runtime": "nodejs14.x",
@@ -190,7 +190,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-deployment-bucket-illia-us-east-1",
-                "S3Key": "serverless/cf-language-app/prod/1643386784418-2022-01-28T16:19:44.418Z/cf-language-app.zip"
+                "S3Key": "serverless/cf-language-app/prod/1643594707520-2022-01-31T02:05:07.520Z/cf-language-app.zip"
               },
               "Handler": "api/postItem/index.handler",
               "Runtime": "nodejs14.x",
@@ -209,25 +209,25 @@
               "PostItemLogGroup"
             ]
           },
-          "PostItemLambdaVersiongXgpibVpH55nQYBWmcX4OMZS1av2K441Eif9ftmgPY": {
+          "PostItemLambdaVersionuRSQNkD16bDGsysWKk9DpSfVJd4gFDa0OXnILqknnB8": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "PostItemLambdaFunction"
               },
-              "CodeSha256": "8q0WAIF/R0JjmXF40/S5FMdm/2HfzZRchxiTWBrBhG8=",
+              "CodeSha256": "9RwFzXRTpb2cbfOfJ+0Lbd8UUIVENqi3uq5ALCwTbjE=",
               "Description": "post item to the dynamodb table"
             }
           },
-          "GetTableLambdaVersion2ABizGTqYbAdHOKZRxoklGpvD59zwO3xr2gqFl3hhA": {
+          "GetTableLambdaVersionqJnGsv7nDG5pHOFZf0a5GNY1mVSwYMe5uyzmrYSQY": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetTableLambdaFunction"
               },
-              "CodeSha256": "8q0WAIF/R0JjmXF40/S5FMdm/2HfzZRchxiTWBrBhG8=",
+              "CodeSha256": "9RwFzXRTpb2cbfOfJ+0Lbd8UUIVENqi3uq5ALCwTbjE=",
               "Description": "get item from the dynamodb table"
             }
           },
@@ -452,7 +452,7 @@
               "PostItemLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1643386780747": {
+          "ApiGatewayDeployment1643594703294": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -587,7 +587,7 @@
           "PostItemLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PostItemLambdaVersiongXgpibVpH55nQYBWmcX4OMZS1av2K441Eif9ftmgPY"
+              "Ref": "PostItemLambdaVersionuRSQNkD16bDGsysWKk9DpSfVJd4gFDa0OXnILqknnB8"
             },
             "Export": {
               "Name": "sls-cf-language-app-prod-PostItemLambdaFunctionQualifiedArn"
@@ -596,7 +596,7 @@
           "GetTableLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetTableLambdaVersion2ABizGTqYbAdHOKZRxoklGpvD59zwO3xr2gqFl3hhA"
+              "Ref": "GetTableLambdaVersionqJnGsv7nDG5pHOFZf0a5GNY1mVSwYMe5uyzmrYSQY"
             },
             "Export": {
               "Name": "sls-cf-language-app-prod-GetTableLambdaFunctionQualifiedArn"
@@ -676,7 +676,8 @@
       "vpc": {}
     },
     "plugins": [
-      "@silvermine/serverless-plugin-cloudfront-lambda-edge"
+      "@silvermine/serverless-plugin-cloudfront-lambda-edge",
+      "serverless-offline"
     ],
     "pluginsData": {},
     "functions": {
@@ -715,7 +716,7 @@
         "memory": 128,
         "runtime": "nodejs14.x",
         "vpc": {},
-        "versionLogicalId": "GetTableLambdaVersion2ABizGTqYbAdHOKZRxoklGpvD59zwO3xr2gqFl3hhA"
+        "versionLogicalId": "GetTableLambdaVersionqJnGsv7nDG5pHOFZf0a5GNY1mVSwYMe5uyzmrYSQY"
       },
       "postItem": {
         "name": "language-app-post-item",
@@ -752,7 +753,7 @@
         "memory": 128,
         "runtime": "nodejs14.x",
         "vpc": {},
-        "versionLogicalId": "PostItemLambdaVersiongXgpibVpH55nQYBWmcX4OMZS1av2K441Eif9ftmgPY"
+        "versionLogicalId": "PostItemLambdaVersionuRSQNkD16bDGsysWKk9DpSfVJd4gFDa0OXnILqknnB8"
       }
     },
     "resources": {
@@ -863,7 +864,7 @@
     "artifact": "/Users/inikitin/Documents/SideProjects/language-mobile-app/backend/.serverless/cf-language-app.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/cf-language-app/prod/1643386784418-2022-01-28T16:19:44.418Z",
+    "artifactDirectoryName": "serverless/cf-language-app/prod/1643594707520-2022-01-31T02:05:07.520Z",
     "artifact": "cf-language-app.zip"
   }
 }
