@@ -22,7 +22,7 @@ export default function App() {
     try {
         fetch("postURL", {
           method: 'POST',
-          body: JSON.stringify({level: String(99), wordChar: 'test', id: 'some-test-id-1', wordPinyin: 'test-word', wordEng: 'test-word-eng' })
+          body: JSON.stringify({level: 5, wordChar: '一', id: 'word-1-test', wordPinyin: 'yi1', wordEng: 'one' })
         })
         .then(res => res.json())
         .then(data => {
