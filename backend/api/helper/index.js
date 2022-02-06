@@ -16,4 +16,5 @@ exports.helpers = {
         return response;
     },
     postData: (tableName, tableData) => dynamoDB.put({TableName: tableName, Item: tableData}).promise(),
+    updateItem: (params) => dynamoDB.update(params).promise(),
 }

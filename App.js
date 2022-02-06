@@ -1,16 +1,19 @@
+import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, FlatList } from "react-native";
 
 export default function App() {
-  const fetchData = async () => {
+    const [data, setData] = useState(null);
 
+  const fetchData = async () => {
     try {
-      await fetch("getUrl", {
+      await fetch("getItemURL", {
         method: "GET",
       })
         .then((res) => res.json())
-        .then((data) => {
-          console.log('data',data);
+        .then((res) => {
+          console.log('data',res);
+          setData(res);
         });
     } catch (er) {
       console.error('er', er);
@@ -20,9 +23,9 @@ export default function App() {
 
   const postData = async () => {
     try {
-        fetch("postURL", {
+        fetch("postItemURL", {
           method: 'POST',
-          body: JSON.stringify({level: 5, wordChar: '一', id: 'word-1-test', wordPinyin: 'yi1', wordEng: 'one' })
+          body: JSON.stringify({level: 7, wordChar: '一', id: 'word-1-test', wordPinyin: 'test1!!!!', wordEng: 'one' })
         })
         .then(res => res.json())
         .then(data => {
@@ -31,6 +34,31 @@ export default function App() {
       } catch (er) {
         console.error(er);
       }
+  };
+
+  const updateItem = async () => {
+    try {
+        fetch("updateItemURL", {
+          method: 'POST',
+          body: JSON.stringify({level: 12, wordChar: '一', id: 'word-1-test', wordPinyin: 'yu1', wordEng: 'one' })
+        })
+        .then(res => res.json())
+        .then(data => {
+          console.log('data from post',data);
+        })
+      } catch (er) {
+        console.error(er);
+      }
+  };
+
+  const renderItem = ({ item }) => {
+    return (
+        <Text>
+            <Text style={{margin: 20}}>{item.wordChar}</Text>
+            <Text style={{margin: 20}}>{item.wordEng}</Text>
+            <Text style={{margin: 20}}>{item.wordPinyin}</Text>
+        </Text>
+    );
   };
 
   return (
@@ -45,6 +73,17 @@ export default function App() {
       <TouchableOpacity onPress={postData} style={{ backgroundColor: "blue", marginTop: 10 }}>
         <Text style={{ fontSize: 20, color: "#fff", padding: 10 }}>Post the data</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity onPress={updateItem} style={{ backgroundColor: "blue", marginTop: 10 }}>
+        <Text style={{ fontSize: 20, color: "#fff", padding: 10 }}>Update item</Text>
+      </TouchableOpacity>
+
+        <FlatList
+            style={{marginTop: 40}}
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
+        />
     </View>
   );
 }
@@ -52,6 +91,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 25,
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
