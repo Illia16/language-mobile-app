@@ -1,9 +1,29 @@
-import React, { useState } from "react";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, TouchableOpacity, FlatList } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, TouchableOpacity, Pressable } from "react-native";
+import Lesson from './components/Lesson';
 
 export default function App() {
     const [data, setData] = useState(null);
+    const [started, setStarted] = useState(false);
+    const [loading, setLoading] = useState(false);
+    // main menu states
+    const [numQuestions, setNumQuestions] = useState(null);
+    const [mode, setMode] = useState(null);
+    // api error state
+    const [errorApi, setErrorApi] = useState(false);
+
+
+    useEffect(()=>{
+        // fetchData()
+        setData(
+            [
+                { "id": "word-1-1", "wordChar": "一", "wordPinyin": "yi1", "wordEng": "one", "level": 0},
+                { "id": "word-1-2", "wordChar": "二", "wordPinyin": "er4", "wordEng": "two", "level": 0},
+                { "id": "word-1-3", "wordChar": "三", "wordPinyin": "san1", "wordEng": "three", "level": 0},
+                { "id": "word-1-4", "wordChar": "四", "wordPinyin": "si4", "wordEng": "four", "level": 0},
+            ]
+            )
+    },[])
 
   const fetchData = async () => {
     try {
@@ -25,7 +45,7 @@ export default function App() {
     try {
         fetch("postItemURL", {
           method: 'POST',
-          body: JSON.stringify({level: 7, wordChar: '一', id: 'word-1-test', wordPinyin: 'test1!!!!', wordEng: 'one' })
+          body: JSON.stringify({level: 0, wordChar: '我', id: 'word-1-11', wordPinyin: 'wo3', wordEng: 'I' })
         })
         .then(res => res.json())
         .then(data => {
@@ -51,39 +71,59 @@ export default function App() {
       }
   };
 
-  const renderItem = ({ item }) => {
-    return (
-        <Text>
-            <Text style={{margin: 20}}>{item.wordChar}</Text>
-            <Text style={{margin: 20}}>{item.wordEng}</Text>
-            <Text style={{margin: 20}}>{item.wordPinyin}</Text>
-        </Text>
-    );
+  const startGame = () => {
+      setStarted(true);
   };
 
   return (
     <View style={styles.container}>
-      <Text>Hi there! Originally creted on: 25 Jan</Text>
-      <StatusBar style="auto" />
+        { started ?
+            <Lesson data={data} numQuestions={numQuestions} mode={mode} setStarted={setStarted} />
+            :
+            <View>
+                <TouchableOpacity onPress={fetchData} style={{ backgroundColor: "blue", marginTop: 10 }}>
+                    <Text style={{ fontSize: 20, color: "#fff", padding: 10 }}>Get the data</Text>
+                </TouchableOpacity>
 
-      <TouchableOpacity onPress={fetchData} style={{ backgroundColor: "blue", marginTop: 10 }}>
-        <Text style={{ fontSize: 20, color: "#fff", padding: 10 }}>Get the data</Text>
-      </TouchableOpacity>
+                <TouchableOpacity onPress={postData} style={{ backgroundColor: "blue", marginTop: 10 }}>
+                    <Text style={{ fontSize: 20, color: "#fff", padding: 10 }}>Post the data</Text>
+                </TouchableOpacity>
 
-      <TouchableOpacity onPress={postData} style={{ backgroundColor: "blue", marginTop: 10 }}>
-        <Text style={{ fontSize: 20, color: "#fff", padding: 10 }}>Post the data</Text>
-      </TouchableOpacity>
+                <TouchableOpacity onPress={updateItem} style={{ backgroundColor: "blue", marginTop: 10 }}>
+                    <Text style={{ fontSize: 20, color: "#fff", padding: 10 }}>Update item</Text>
+                </TouchableOpacity>
 
-      <TouchableOpacity onPress={updateItem} style={{ backgroundColor: "blue", marginTop: 10 }}>
-        <Text style={{ fontSize: 20, color: "#fff", padding: 10 }}>Update item</Text>
-      </TouchableOpacity>
+                {data && data.length ?
+                    <div>
+                        <label>
+                            <select id="numQuestions" onChange={(e)=>setNumQuestions(Number(e.target.value))}>
+                                <option value=''>Questions number</option>
+                                <option value={10}>10</option>
+                                <option value={20}>20</option>
+                                <option value={30}>30</option>
+                                <option value={data.length/2}>{data.length/2}</option>
+                                <option value={data.length}>{data.length}</option>
+                            </select>
+                        </label>
 
-        <FlatList
-            style={{marginTop: 40}}
-            data={data}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-        />
+                        <label>
+                            <select id="mode" onChange={(e)=>setMode(e.target.value)}>
+                                <option value=''>Training mode</option>
+                                <option value={'CN - ENG'}>CN - ENG</option>
+                                <option value={'ENG - CN'}>ENG - CN</option>
+                                <option value={'CN - ENG MP Choice'}>CN - ENG MP Choice</option>
+                                <option value={'ENG - CN MP Choice'}>ENG - CN MP Choice</option>
+                                <option value={'Random'}>Random</option>
+                            </select>
+                        </label>
+                    </div>
+                : null}
+
+                <Pressable onPress={startGame} style={!numQuestions && !mode ? btnStyles.disabled : btnStyles.default } disabled={!numQuestions && !mode}>
+                    <Text style={{ fontSize: 20, color: "#fff", padding: 10 }}>Start</Text>
+                </Pressable>
+            </View>
+        }
     </View>
   );
 }
@@ -96,4 +136,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+});
+
+const btnStyles = StyleSheet.create({
+    default: {
+        backgroundColor: "blue",
+        marginTop: 10
+    },
+    disabled: {
+        backgroundColor: "grey",
+        marginTop: 10
+    }
 });
