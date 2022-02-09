@@ -1,9 +1,10 @@
-const { helpers } = require('../helper/index.js')
+const { getData } = require('../helper/index.js')
 
-exports.handler = async () => {
+exports.handler = async (event, context) => {
     try {
-        return helpers.getData("languageAppIn");
+        return getData("languageAppIn");
     } catch (er) {
+        console.error('er:', er);
         return er;
     }
 }

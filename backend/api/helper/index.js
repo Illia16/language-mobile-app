@@ -1,7 +1,7 @@
 const AWS = require("aws-sdk");
 var dynamoDB = new AWS.DynamoDB.DocumentClient();
 
-exports.helpers = {
+module.exports = {
     getData: async (tableName) => {
         const res = await dynamoDB.scan({TableName: tableName}).promise();
         const response = {

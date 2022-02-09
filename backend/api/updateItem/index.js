@@ -1,4 +1,4 @@
-const { helpers } = require('../helper/index.js')
+const { updateItem, getData } = require('../helper/index.js')
 
 exports.handler = async (event) => {
     const parsedBody = JSON.parse(event.body);
@@ -18,8 +18,8 @@ exports.handler = async (event) => {
 
 
     try {
-        await helpers.updateItem(params);
-        const updatedData = await helpers.getData("languageAppIn");
+        await updateItem(params);
+        const updatedData = await getData("languageAppIn");
         return updatedData;
     } catch (er) {
         return er;
