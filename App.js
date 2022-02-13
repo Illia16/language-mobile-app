@@ -17,104 +17,97 @@ const App = () => {
 	useEffect(() => {
 		// fetchData()
 		setData([
-			{
-				id: 'word-1-1',
-				wordChar: '一',
-				wordPinyin: 'yi1',
-				wordEng: 'one',
-				level: 0,
-			},
-			{
-				id: 'word-1-2',
-				wordChar: '二',
-				wordPinyin: 'er4',
-				wordEng: 'two',
-				level: 0,
-			},
-			{
-				id: 'word-1-3',
-				wordChar: '三',
-				wordPinyin: 'san1',
-				wordEng: 'three',
-				level: 0,
-			},
-			{
-				id: 'word-1-4',
-				wordChar: '四',
-				wordPinyin: 'si4',
-				wordEng: 'four',
-				level: 0,
-			},
+            {
+                id: '1-11',
+                level: 0,
+                wordData: {
+                    word: '我',
+                    translation: 'I',
+                    transcription: 'wo3'
+                },
+                isSentense: false
+            },
+            {
+                id: '1-1',
+                level: 0,
+                wordData: {
+                    word: '一',
+                    translation: 'one',
+                    transcription: 'yi1'
+                },
+                isSentense: false
+            },
+            {
+                id: '1-2',
+                level: 0,
+                wordData: {
+                    word: '二',
+                    translation: 'two',
+                    transcription: 'er4'
+                },
+                isSentense: false
+            },
+            {
+                id: '1-3',
+                level: 0,
+                wordData: {
+                    word: '你好',
+                    translation: 'Hello',
+                    transcription: ' ni3hao3'
+                },
+                isSentense: true
+            },
+            {
+                id: '1-4',
+                level: 0,
+                wordData: {
+                    word: '你叫什么?',
+                    translation: 'What is your name?',
+                    transcription: 'ni3 jiao4 shen me?'
+                },
+                isSentense: true
+            },
 		]);
+
+        // usefull for styling quetions, remove later
         // setTimeout(() => {
-        //     setNumQuestions('2');
-        //     setMode('CN - ENG');
+        //     setNumQuestions('3');
+        //     setMode('wordTranslation');
         //     setStarted(true);
         // }, 300);
 	}, []);
 
 	const fetchData = async () => {
 		setLoading(true);
-		setTimeout(() => {
-			setData([
-				{
-					id: 'word-1-1',
-					wordChar: '一',
-					wordPinyin: 'yi1',
-					wordEng: 'one',
-					level: 0,
-				},
-				{
-					id: 'word-1-2',
-					wordChar: '二',
-					wordPinyin: 'er4',
-					wordEng: 'two',
-					level: 0,
-				},
-				{
-					id: 'word-1-3',
-					wordChar: '三',
-					wordPinyin: 'san1',
-					wordEng: 'three',
-					level: 0,
-				},
-				{
-					id: 'word-1-4',
-					wordChar: '四',
-					wordPinyin: 'si4',
-					wordEng: 'four',
-					level: 0,
-				},
-			]);
+
+		try {
+			await fetch('getItemAPI', {
+				method: 'GET',
+			})
+				.then((res) => res.json())
+				.then((res) => {
+					setLoading(false);
+					console.log('data', res);
+					setData(res);
+				});
+		} catch (er) {
 			setLoading(false);
-		}, 2000);
-
-		// try {
-		// 	await fetch('getItemURL', {
-		// 		method: 'GET',
-		// 	})
-		// 		.then((res) => res.json())
-		// 		.then((res) => {
-		// 			setLoading(false);
-		// 			console.log('data', res);
-		// 			setData(res);
-		// 		});
-		// } catch (er) {
-		// 	setLoading(false);
-		// 	console.error('er', er);
-		// }
+			console.error('er', er);
+		}
 	};
-
 	const postData = async () => {
 		try {
-			fetch('postItemURL', {
+			fetch('postItemAPI', {
 				method: 'POST',
 				body: JSON.stringify({
+                    id: '1-11',
 					level: 0,
-					wordChar: '我',
-					id: 'word-1-11',
-					wordPinyin: 'wo3',
-					wordEng: 'I',
+					wordData: {
+                        word: '我',
+                        translation: 'I',
+                        transcription: 'wo3'
+                    },
+                    isSentense: false
 				}),
 			})
 				.then((res) => res.json())
@@ -128,14 +121,17 @@ const App = () => {
 
 	const updateItem = async () => {
 		try {
-			fetch('updateItemURL', {
+			fetch('updateItemAPI', {
 				method: 'POST',
 				body: JSON.stringify({
-					level: 12,
-					wordChar: '一',
-					id: 'word-1-test',
-					wordPinyin: 'yu1',
-					wordEng: 'one',
+                    id: '1-11-test',
+					level: 2,
+					wordData: {
+                        word: '我',
+                        translation: 'I',
+                        transcription: 'wo3'
+                    },
+                    isSentense: false
 				}),
 			})
 				.then((res) => res.json())
@@ -184,28 +180,34 @@ const App = () => {
 							loading={loading}
 							style={styles.buttonDefault}
 							onPress={updateItem}>
-							Post the data
+							Update data
 						</Button>
 
 						{data && data.length ? (
                             <View style={styles.radioContainer}>
                                 <RadioButton.Group onValueChange={(v) => setNumQuestions(v)} value={numQuestions}>
                                     <Text>Select number of questions</Text>
+                                    {data.length >= 10 &&
+                                        <View>
+                                            <Text>10</Text>
+                                            <RadioButton value={10} />
+                                        </View>
+                                    }
+                                    {data.length >= 20 &&
+                                        <View>
+                                            <Text>20</Text>
+                                            <RadioButton value={20} />
+                                        </View>
+                                    }
+                                    {data.length >= 30 &&
+                                        <View>
+                                            <Text>30</Text>
+                                            <RadioButton value={30} />
+                                        </View>
+                                    }
                                     <View>
-                                        <Text>10</Text>
-                                        <RadioButton value={10} />
-                                    </View>
-                                    <View>
-                                        <Text>20</Text>
-                                        <RadioButton value={20}/>
-                                    </View>
-                                    <View>
-                                        <Text>30</Text>
-                                        <RadioButton value={30}/>
-                                    </View>
-                                    <View>
-                                        <Text>{data.length / 2}</Text>
-                                        <RadioButton value={data.length / 2} />
+                                        <Text>{Math.round(data.length / 2)}</Text>
+                                        <RadioButton value={Math.round(data.length / 2)} />
                                     </View>
                                     <View>
                                         <Text>{data.length}</Text>
@@ -217,24 +219,24 @@ const App = () => {
                                 <RadioButton.Group onValueChange={(v) => setMode(v)} value={mode}>
                                     <Text>Mode</Text>
                                     <View>
-                                        <Text>CN - ENG</Text>
-                                        <RadioButton value={'CN - ENG'} />
+                                        <Text>Word - Translation</Text>
+                                        <RadioButton value={'wordTranslation'} />
                                     </View>
                                     <View>
-                                        <Text>ENG - CN</Text>
-                                        <RadioButton value={'ENG - CN'}/>
+                                        <Text>Translation - Word</Text>
+                                        <RadioButton value={'translationWord'}/>
                                     </View>
                                     <View>
-                                        <Text>CN - ENG MP Choice</Text>
-                                        <RadioButton value={'CN - ENG MP Choice'}/>
+                                        <Text>Word - Translation Multiple Choice</Text>
+                                        <RadioButton value={'wordTranslationMPChoice'}/>
                                     </View>
                                     <View>
-                                        <Text>ENG - CN MP Choice</Text>
-                                        <RadioButton value={'ENG - CN MP Choice'} />
+                                        <Text>Translation - Word Multiple Choice</Text>
+                                        <RadioButton value={'translationWordMPChoice'} />
                                     </View>
                                     <View>
                                         <Text>Random</Text>
-                                        <RadioButton value={'Random'} />
+                                        <RadioButton value={'random'} />
                                     </View>
                                 </RadioButton.Group>
 							</View>
@@ -243,12 +245,12 @@ const App = () => {
 						<Button
 							mode='contained'
 							style={
-								!numQuestions && !mode
+								!numQuestions || !mode
 									? styles.buttonDisabled
 									: styles.buttonDefault
 							}
 							onPress={startGame}
-                            disabled={!numQuestions & !mode}>
+                            disabled={!numQuestions || !mode}>
 							Start
 						</Button>
 					</View>

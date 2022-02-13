@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Text, TextInput, List } from 'react-native-paper';
+import { Button, Text, TextInput, List, RadioButton } from 'react-native-paper';
 import { sortArray, getQuestion, isCorrect } from '../helpers/helpers.js';
 
 const Lesson = ({ data, numQuestions, mode, setStarted }) => {
@@ -8,19 +8,19 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 	const [currentQuestionNum, setCurrentQuestionNum] = useState(1);
 	const [currentQuestion, setCurrentQuestion] = useState({});
 	const [currentQuestionAnswered, setCurrentQuestionAnswered] = useState(false);
-	const [answer, setAnswer] = useState(null);
+	const [userAnswer, setUserAnswer] = useState(null);
 	const [numOfCorrectAnswers, setNumOfCorrectAnswers] = useState(0);
 	const [report, setReport] = useState([]);
 	const [lessonDone, setLessonDone] = useState(null);
 
 	// handling incorrect, correct answers and if no more questions, stopping the lesson
 	const check = () => {
-		if (!isCorrect(currentQuestion, answer)) {
+		if (!isCorrect(currentQuestion, userAnswer)) {
 			setCurrentQuestionAnswered(true);
-			recordUserAnswer(false, answer, currentQuestion);
+			recordUserAnswer(false, userAnswer, currentQuestion);
 		} else {
 			setCurrentQuestionAnswered(true);
-			recordUserAnswer(true, answer, currentQuestion);
+			recordUserAnswer(true, userAnswer, currentQuestion);
 			setNumOfCorrectAnswers(numOfCorrectAnswers + 1);
 		}
 
@@ -30,9 +30,10 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 	};
 
 	// recording answers, their correctness for report at the end and updating API.
-	const recordUserAnswer = (correct, answer, { qAnswer, id }) => {
+	const recordUserAnswer = (correct, userAnswer, { qAnswer, question, id }) => {
 		const r = {};
-		r.userAnswer = answer;
+        r.question = question
+		r.userAnswer = userAnswer;
 		r.correctAnswer = qAnswer;
 		r.id = id;
 
@@ -48,7 +49,7 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 	const nextQuestion = () => {
 		setCurrentQuestionNum(currentQuestionNum + 1);
 		setCurrentQuestionAnswered(false);
-        setAnswer('');
+		setUserAnswer('');
 	};
 
 	// setting questions based on preferred number of them
@@ -67,45 +68,53 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 		<View>
 			{lessonData && lessonData.length && !lessonDone ? (
 				<View>
-					<Text>
-						Current question {currentQuestionNum}
-					</Text>
-					<Text>
-						{currentQuestion.question}
-					</Text>
+					<Text>Current question {currentQuestionNum}</Text>
+					<Text>{currentQuestion.question}</Text>
 
 					{currentQuestionAnswered ? (
 						<Text
 							style={
-								isCorrect(currentQuestion, answer)
+								isCorrect(currentQuestion, userAnswer)
 									? answeredQ.correct
 									: answeredQ.incorrect
 							}>
-							{isCorrect(currentQuestion, answer)
+							{isCorrect(currentQuestion, userAnswer)
 								? 'Correct!'
 								: `Incorrect, correct answer is: ${currentQuestion.qAnswer}`}
 						</Text>
 					) : null}
 
-					<TextInput
-						style={
-							currentQuestionAnswered
-								? textInput.disabled
-								: textInput.default
-						}
-						editable={!currentQuestionAnswered}
-						placeholder='enter here'
-						value={answer}
-						onChangeText={setAnswer}
-					/>
+					{/* handling question based on the mode */}
+					{currentQuestion.all && currentQuestion.all.length ? (
+                        <RadioButton.Group onValueChange={(newVal) => setUserAnswer(newVal)} value={userAnswer}>
+                            {currentQuestion.all.map((item) => {
+                                return (
+                                    <View>
+                                        <Text>{item}</Text>
+                                        <RadioButton value={item} />
+                                    </View>
+                                );
+                            })}
+                        </RadioButton.Group>
+					) : (
+						<TextInput
+							style={
+								currentQuestionAnswered
+									? textInput.disabled
+									: textInput.default
+							}
+							editable={!currentQuestionAnswered}
+							placeholder='enter here'
+							value={userAnswer}
+							onChangeText={setUserAnswer}
+						/>
+					)}
 
 					<Button
 						onPress={check}
-						style={!answer ? btnStyles.disabled : btnStyles.default}
-						disabled={!answer}>
-						<Text>
-							Check
-						</Text>
+						style={!userAnswer || currentQuestionAnswered ? btnStyles.disabled : btnStyles.default}
+						disabled={!userAnswer || currentQuestionAnswered}>
+						<Text>Check</Text>
 					</Button>
 					{!lessonDone && (
 						<Button
@@ -116,9 +125,7 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 									: btnStyles.default
 							}
 							disabled={!currentQuestionAnswered}>
-							<Text>
-								Next Q
-							</Text>
+							<Text>Next Q</Text>
 						</Button>
 					)}
 				</View>
@@ -131,6 +138,14 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 						{report.map((item) => {
 							return (
 								<View>
+									<Text
+										style={
+											item.isCorrect
+												? reportStyles.correct
+												: reportStyles.incorrect
+										}>
+										Question: {item.question}
+									</Text>
 									<Text
 										style={
 											item.isCorrect
@@ -153,9 +168,7 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 					</View>
 
 					<Button onPress={() => setStarted(false)} style={btnStyles.default}>
-						<Text>
-							Back to menu
-						</Text>
+						<Text>Back to menu</Text>
 					</Button>
 				</List.Section>
 			)}

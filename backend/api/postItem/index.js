@@ -4,11 +4,14 @@ exports.handler = async (event) => {
     const parsedBody = JSON.parse(event.body);
     try {
         await postData("languageAppIn", {
-            "level": parsedBody.level,
-            "wordChar": parsedBody.wordChar,
-            "wordPinyin": parsedBody.wordPinyin,
-            "wordEng": parsedBody.wordEng,
             "id": parsedBody.id,
+            "level": parsedBody.level,
+            "wordData": {
+                "word": parsedBody.wordData.word,
+                "translation": parsedBody.wordData.translation,
+                "transcription": parsedBody.wordData.transcription
+            },
+            "isSentense": parsedBody.isSentense
         });
 
         const updatedData = await getData("languageAppIn");
