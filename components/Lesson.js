@@ -1,12 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Text, TextInput, List, RadioButton } from 'react-native-paper';
-import { sortArray, getQuestion, isCorrect } from '../helpers/helpers.js';
+import {
+	Button,
+	Text,
+	TextInput,
+	List,
+	RadioButton,
+	Checkbox,
+	Chip,
+} from 'react-native-paper';
+import {
+	sortArray,
+	getQuestion,
+	isCorrect,
+	sentenceBuilderArr,
+} from '../helpers/helpers.js';
 
 const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 	const [lessonData, setLessonData] = useState(null);
 	const [currentQuestionNum, setCurrentQuestionNum] = useState(1);
 	const [currentQuestion, setCurrentQuestion] = useState({});
+	const [currentQuestionSplit, setCurrentQuestionSplit] = useState(null);
 	const [currentQuestionAnswered, setCurrentQuestionAnswered] = useState(false);
 	const [userAnswer, setUserAnswer] = useState(null);
 	const [numOfCorrectAnswers, setNumOfCorrectAnswers] = useState(0);
@@ -32,7 +46,7 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 	// recording answers, their correctness for report at the end and updating API.
 	const recordUserAnswer = (correct, userAnswer, { qAnswer, question, id }) => {
 		const r = {};
-        r.question = question
+		r.question = question;
 		r.userAnswer = userAnswer;
 		r.correctAnswer = qAnswer;
 		r.id = id;
@@ -52,9 +66,19 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 		setUserAnswer('');
 	};
 
+	const buildString = function (e) {
+		console.log('e', e);
+		console.log('e', e.target.value);
+		console.log('this', this);
+	};
+
 	// setting questions based on preferred number of them
 	useEffect(() => {
-		setLessonData(sortArray(data).slice(0, numQuestions));
+		if (mode !== 'sentenceWordTranslation' && mode !== 'sentenceTranslationWord') {
+			setLessonData(sortArray(data).slice(0, numQuestions));
+		} else {
+			setLessonData(sortArray(sentenceBuilderArr(data)).slice(0, numQuestions));
+		}
 	}, []);
 
 	// gettign current question based on the MODE selected
@@ -63,6 +87,16 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 			setCurrentQuestion(getQuestion(mode, lessonData, currentQuestionNum));
 		}
 	}, [lessonData, currentQuestionNum]);
+
+	useEffect(() => {
+		if (
+			currentQuestion &&
+			currentQuestion.question &&
+			(mode === 'sentenceWordTranslation' || mode === 'sentenceTranslationWord')
+		) {
+			setCurrentQuestionSplit(currentQuestion?.qAnswer?.split(''));
+		}
+	}, [currentQuestion]);
 
 	return (
 		<View>
@@ -86,16 +120,54 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 
 					{/* handling question based on the mode */}
 					{currentQuestion.all && currentQuestion.all.length ? (
-                        <RadioButton.Group onValueChange={(newVal) => setUserAnswer(newVal)} value={userAnswer}>
-                            {currentQuestion.all.map((item) => {
-                                return (
+						<RadioButton.Group
+							onValueChange={(newVal) => setUserAnswer(newVal)}
+							value={userAnswer}>
+							{currentQuestion.all.map((item) => {
+								return (
+									<View>
+										<Text>{item}</Text>
+										<RadioButton value={item} />
+									</View>
+								);
+							})}
+						</RadioButton.Group>
+					) : mode === 'sentenceWordTranslation' ||
+					  mode === 'sentenceTranslationWord' ? (
+						<View>
+							<Text>Answer:{userAnswer}</Text>
+							{currentQuestionSplit?.map((el, i) => {
+								return (
+									// TO DO
+									// <Button
+									// 	onPress={buildString}
+									// 	// style={!userAnswer || currentQuestionAnswered ? btnStyles.disabled : btnStyles.default}
+									// 	// disabled={!userAnswer || currentQuestionAnswered}
+									// >
                                     <View>
-                                        <Text>{item}</Text>
-                                        <RadioButton value={item} />
+										<Text>{el}</Text>
+										<TextInput
+                                            onPressIn={buildString}
+                                            style={{opacity: '0'}}
+											value={currentQuestionSplit[i]}
+										/>
                                     </View>
-                                );
-                            })}
-                        </RadioButton.Group>
+									// </Button>
+									// <View>
+									//     <Checkbox
+									//         value={currentQuestionSplit[i]}
+									//         status={el === currentQuestionSplit[i]  ? 'checked' : 'unchecked'}
+									//         onPress={(el,i)=>buildString(el,i)}
+									//         />
+									//     <Text>{el}</Text>
+									// </View>
+									// <Chip icon="information" onPress={buildString}>
+									//      <Text>{el}</Text>
+									// </Chip>
+								);
+							})}
+							<Button onPress={() => setUserAnswer('')}>Clear</Button>
+						</View>
 					) : (
 						<TextInput
 							style={
@@ -112,7 +184,11 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 
 					<Button
 						onPress={check}
-						style={!userAnswer || currentQuestionAnswered ? btnStyles.disabled : btnStyles.default}
+						style={
+							!userAnswer || currentQuestionAnswered
+								? btnStyles.disabled
+								: btnStyles.default
+						}
 						disabled={!userAnswer || currentQuestionAnswered}>
 						<Text>Check</Text>
 					</Button>

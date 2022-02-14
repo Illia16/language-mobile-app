@@ -38,6 +38,7 @@ export const getQuestion = (m, lessonData, currentQuestionNum) => {
         }
     }
 
+    console.log('questionAnswer',questionAnswer);
     return questionAnswer;
 }
 
@@ -50,4 +51,9 @@ export const fillMpChoiceArray = (data, correctAnswer, mpChoiceType) => {
 
 export const isCorrect = (currentQuestion, answer) => {
     return answer.toLowerCase().trim() === currentQuestion.qAnswer.toLowerCase().trim();
+}
+
+// function outputs a lesson array for sentence-builder mode ONLY
+export const sentenceBuilderArr = (data) => {
+    return data.filter(el=>el.isSentense && el);
 }
