@@ -1,26 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
-import {
-	Button,
-	Text,
-	TextInput,
-	List,
-	RadioButton,
-	Checkbox,
-	Chip,
-} from 'react-native-paper';
-import {
-	sortArray,
-	getQuestion,
-	isCorrect,
-	sentenceBuilderArr,
-} from '../helpers/helpers.js';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Button, Text, TextInput, List, RadioButton } from 'react-native-paper';
+import { getLesson, getQuestion, isCorrect } from '../helpers/helpers.js';
 
 const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 	const [lessonData, setLessonData] = useState(null);
 	const [currentQuestionNum, setCurrentQuestionNum] = useState(1);
 	const [currentQuestion, setCurrentQuestion] = useState({});
-	const [currentQuestionSplit, setCurrentQuestionSplit] = useState(null);
 	const [currentQuestionAnswered, setCurrentQuestionAnswered] = useState(false);
 	const [userAnswer, setUserAnswer] = useState(null);
 	const [numOfCorrectAnswers, setNumOfCorrectAnswers] = useState(0);
@@ -66,19 +52,13 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 		setUserAnswer('');
 	};
 
-	const buildString = function (e) {
-		console.log('e', e);
-		console.log('e', e.target.value);
-		console.log('this', this);
+	const buildString = function (letter) {
+		setUserAnswer((prev) => (prev ? prev + letter : letter));
 	};
 
-	// setting questions based on preferred number of them
+	// setting lesson data (questions) based on the selected mode and number of questions(available/wanted)
 	useEffect(() => {
-		if (mode !== 'sentenceWordTranslation' && mode !== 'sentenceTranslationWord') {
-			setLessonData(sortArray(data).slice(0, numQuestions));
-		} else {
-			setLessonData(sortArray(sentenceBuilderArr(data)).slice(0, numQuestions));
-		}
+		setLessonData(getLesson(mode, data).slice(0, numQuestions));
 	}, []);
 
 	// gettign current question based on the MODE selected
@@ -87,16 +67,6 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 			setCurrentQuestion(getQuestion(mode, lessonData, currentQuestionNum));
 		}
 	}, [lessonData, currentQuestionNum]);
-
-	useEffect(() => {
-		if (
-			currentQuestion &&
-			currentQuestion.question &&
-			(mode === 'sentenceWordTranslation' || mode === 'sentenceTranslationWord')
-		) {
-			setCurrentQuestionSplit(currentQuestion?.qAnswer?.split(''));
-		}
-	}, [currentQuestion]);
 
 	return (
 		<View>
@@ -123,47 +93,25 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 						<RadioButton.Group
 							onValueChange={(newVal) => setUserAnswer(newVal)}
 							value={userAnswer}>
-							{currentQuestion.all.map((item) => {
+							{currentQuestion.all.map((item, i) => {
 								return (
-									<View>
+									<View key={`${i}-${item}`}>
 										<Text>{item}</Text>
 										<RadioButton value={item} />
 									</View>
 								);
 							})}
 						</RadioButton.Group>
-					) : mode === 'sentenceWordTranslation' ||
-					  mode === 'sentenceTranslationWord' ? (
+					) : currentQuestion.splitted && currentQuestion.splitted.length ? (
 						<View>
 							<Text>Answer:{userAnswer}</Text>
-							{currentQuestionSplit?.map((el, i) => {
+							{currentQuestion.splitted?.map((letter, i) => {
 								return (
-									// TO DO
-									// <Button
-									// 	onPress={buildString}
-									// 	// style={!userAnswer || currentQuestionAnswered ? btnStyles.disabled : btnStyles.default}
-									// 	// disabled={!userAnswer || currentQuestionAnswered}
-									// >
-                                    <View>
-										<Text>{el}</Text>
-										<TextInput
-                                            onPressIn={buildString}
-                                            style={{opacity: '0'}}
-											value={currentQuestionSplit[i]}
-										/>
-                                    </View>
-									// </Button>
-									// <View>
-									//     <Checkbox
-									//         value={currentQuestionSplit[i]}
-									//         status={el === currentQuestionSplit[i]  ? 'checked' : 'unchecked'}
-									//         onPress={(el,i)=>buildString(el,i)}
-									//         />
-									//     <Text>{el}</Text>
-									// </View>
-									// <Chip icon="information" onPress={buildString}>
-									//      <Text>{el}</Text>
-									// </Chip>
+									<View>
+										<Pressable onPress={() => buildString(letter)}>
+											<Text>{letter}</Text>
+										</Pressable>
+									</View>
 								);
 							})}
 							<Button onPress={() => setUserAnswer('')}>Clear</Button>
