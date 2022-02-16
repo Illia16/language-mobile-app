@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-import { Button, Text, TextInput, List, RadioButton } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Button, Text } from 'react-native-paper';
 import { getLesson, getQuestion, isCorrect } from '../helpers/helpers.js';
+
+// Question-related components
+import QuestionMsgCorrectOrIncorrect from './question/QuestionMsgCorrectOrIncorrect';
+import QuestionTypeRegular from './question/QuestionTypeRegular';
+import QuestionTypeMpChoice from './question/QuestionTypeMpChoice';
+import QuestionTypySentenceBuilder from './question/QuestionTypySentenceBuilder';
+
+// Lesson-related componets
+import LessonReport from './LessonReport';
 
 const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 	const [lessonData, setLessonData] = useState(null);
@@ -52,10 +61,6 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 		setUserAnswer('');
 	};
 
-	const buildString = function (letter) {
-		setUserAnswer((prev) => (prev ? prev + letter : letter));
-	};
-
 	// setting lesson data (questions) based on the selected mode and number of questions(available/wanted)
 	useEffect(() => {
 		setLessonData(getLesson(mode, data).slice(0, numQuestions));
@@ -75,59 +80,35 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 					<Text>Current question {currentQuestionNum}</Text>
 					<Text>{currentQuestion.question}</Text>
 
-					{currentQuestionAnswered ? (
-						<Text
-							style={
-								isCorrect(currentQuestion, userAnswer)
-									? answeredQ.correct
-									: answeredQ.incorrect
-							}>
-							{isCorrect(currentQuestion, userAnswer)
-								? 'Correct!'
-								: `Incorrect, correct answer is: ${currentQuestion.qAnswer}`}
-						</Text>
-					) : null}
+					<QuestionMsgCorrectOrIncorrect
+						currentQuestionAnswered={currentQuestionAnswered}
+						currentQuestion={currentQuestion}
+						userAnswer={userAnswer}
+					/>
 
 					{/* handling question based on the mode */}
-					{currentQuestion.all && currentQuestion.all.length ? (
-						<RadioButton.Group
-							onValueChange={(newVal) => setUserAnswer(newVal)}
-							value={userAnswer}>
-							{currentQuestion.all.map((item, i) => {
-								return (
-									<View key={`${i}-${item}`}>
-										<Text>{item}</Text>
-										<RadioButton value={item} />
-									</View>
-								);
-							})}
-						</RadioButton.Group>
-					) : currentQuestion.splitted && currentQuestion.splitted.length ? (
-						<View>
-							<Text>Answer:{userAnswer}</Text>
-							{currentQuestion.splitted?.map((letter, i) => {
-								return (
-									<View>
-										<Pressable onPress={() => buildString(letter)}>
-											<Text>{letter}</Text>
-										</Pressable>
-									</View>
-								);
-							})}
-							<Button onPress={() => setUserAnswer('')}>Clear</Button>
-						</View>
-					) : (
-						<TextInput
-							style={
-								currentQuestionAnswered
-									? textInput.disabled
-									: textInput.default
-							}
-							editable={!currentQuestionAnswered}
-							placeholder='enter here'
-							value={userAnswer}
-							onChangeText={setUserAnswer}
+					{currentQuestion.all && currentQuestion.all.length && (
+						<QuestionTypeMpChoice
+							setUserAnswer={setUserAnswer}
+							userAnswer={userAnswer}
+							currentQuestion={currentQuestion}
 						/>
+					)}
+
+					{currentQuestion.splitted && currentQuestion.splitted.length && (
+						<QuestionTypySentenceBuilder
+							setUserAnswer={setUserAnswer}
+							userAnswer={userAnswer}
+							currentQuestion={currentQuestion}
+						/>
+					)}
+
+                    {!currentQuestion.splitted && !currentQuestion.all && (
+                        <QuestionTypeRegular
+                            currentQuestionAnswered={currentQuestionAnswered}
+                            userAnswer={userAnswer}
+                            setUserAnswer={setUserAnswer}
+                        />
 					)}
 
 					<Button
@@ -156,82 +137,13 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 			) : null}
 
 			{lessonDone && (
-				<List.Section>
-					<List.Subheader>Results:</List.Subheader>
-					<View>
-						{report.map((item) => {
-							return (
-								<View>
-									<Text
-										style={
-											item.isCorrect
-												? reportStyles.correct
-												: reportStyles.incorrect
-										}>
-										Question: {item.question}
-									</Text>
-									<Text
-										style={
-											item.isCorrect
-												? reportStyles.correct
-												: reportStyles.incorrect
-										}>
-										My answer: {item.userAnswer}
-									</Text>
-									<Text
-										style={
-											item.isCorrect
-												? reportStyles.correct
-												: reportStyles.incorrect
-										}>
-										Correct answer: {item.correctAnswer}
-									</Text>
-								</View>
-							);
-						})}
-					</View>
-
-					<Button onPress={() => setStarted(false)} style={btnStyles.default}>
-						<Text>Back to menu</Text>
-					</Button>
-				</List.Section>
+                <LessonReport report={report} setStarted={setStarted} />
 			)}
 		</View>
 	);
 };
 
 export default Lesson;
-
-const answeredQ = StyleSheet.create({
-	correct: {
-		fontSize: 20,
-		color: 'green',
-		padding: 10,
-	},
-	incorrect: {
-		fontSize: 20,
-		color: 'red',
-		padding: 10,
-	},
-});
-
-const textInput = StyleSheet.create({
-	default: {
-		fontSize: 20,
-		color: 'black',
-		borderColor: 'black',
-		borderWidth: 1,
-		padding: 10,
-	},
-	disabled: {
-		fontSize: 20,
-		color: 'black',
-		borderColor: 'black',
-		borderWidth: 1,
-		padding: 10,
-		opacity: 0.3,
-	},
-});
 
 const btnStyles = StyleSheet.create({
 	default: {
@@ -241,16 +153,5 @@ const btnStyles = StyleSheet.create({
 	disabled: {
 		backgroundColor: 'grey',
 		marginTop: 10,
-	},
-});
-
-const reportStyles = StyleSheet.create({
-	correct: {
-		color: 'green',
-		padding: 20,
-	},
-	incorrect: {
-		color: 'red',
-		padding: 20,
 	},
 });
