@@ -17,7 +17,7 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 	const [currentQuestionNum, setCurrentQuestionNum] = useState(1);
 	const [currentQuestion, setCurrentQuestion] = useState({});
 	const [currentQuestionAnswered, setCurrentQuestionAnswered] = useState(false);
-	const [userAnswer, setUserAnswer] = useState(null);
+	const [userAnswer, setUserAnswer] = useState('');
 	const [numOfCorrectAnswers, setNumOfCorrectAnswers] = useState(0);
 	const [report, setReport] = useState([]);
 	const [lessonDone, setLessonDone] = useState(null);
@@ -92,6 +92,7 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 							setUserAnswer={setUserAnswer}
 							userAnswer={userAnswer}
 							currentQuestion={currentQuestion}
+                            currentQuestionAnswered={currentQuestionAnswered}
 						/>
 					)}
 
@@ -100,6 +101,7 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 							setUserAnswer={setUserAnswer}
 							userAnswer={userAnswer}
 							currentQuestion={currentQuestion}
+                            currentQuestionAnswered={currentQuestionAnswered}
 						/>
 					)}
 

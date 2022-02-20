@@ -17,10 +17,10 @@ export const getLesson = (m, lessonData) => {
 }
 
 export const getQuestion = (m, lessonData, currentQuestionNum) => {
-    let questionAnswer = {};
-    const q = lessonData[currentQuestionNum-1];
 
-    const handleQuestion = (m) => {
+    const handleQuestion = (m, lessonData, currentQuestionNum) => {
+        const questionAnswer = {};
+        const q = lessonData[currentQuestionNum-1];
         questionAnswer.question = q.wordData[m === 'wordTranslation' || m === 'wordTranslationMPChoice' || m === 'sentenceWordTranslation' ? 'word' : 'translation'];
         questionAnswer.qAnswer = q.wordData[m === 'wordTranslation' || m === 'wordTranslationMPChoice' || m === 'sentenceWordTranslation' ? 'translation' : 'word'];
         questionAnswer.id = q.id;
@@ -32,18 +32,23 @@ export const getQuestion = (m, lessonData, currentQuestionNum) => {
         } else if (m === 'sentenceWordTranslation' || m === 'sentenceTranslationWord') {
             questionAnswer.splitted = sortArray(uniqueElements(questionAnswer.qAnswer.split('')));
         }
+
+        return questionAnswer;
     }
 
     if (m !== 'random') {
-        handleQuestion(m);
+        return handleQuestion(m, lessonData, currentQuestionNum);
     } else {
-        const allModes = ['wordTranslation', 'translationWord', 'wordTranslationMPChoice', 'translationWordMPChoice', 'sentenceWordTranslation', 'sentenceTranslationWord'];
-        const randomIndex = Math.floor(Math.random()*allModes.length);
-        const randomMode = allModes[randomIndex];
-        handleQuestion(randomMode);
+        const randomMode = getRandomMode();
+        return handleQuestion(randomMode, lessonData, currentQuestionNum);
     }
+}
 
-    return questionAnswer;
+// function to get a random mode
+const getRandomMode = () => {
+    const allModes = ['wordTranslation', 'translationWord', 'wordTranslationMPChoice', 'translationWordMPChoice', 'sentenceWordTranslation', 'sentenceTranslationWord'];
+    const randomIndex = Math.floor(Math.random()*allModes.length);
+    return allModes[randomIndex];
 }
 
 // function to procude 4 MP choices + include 1 correct answer

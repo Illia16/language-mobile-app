@@ -7,9 +7,9 @@ const LessonReport = ({ report, setStarted }) => {
 		<List.Section>
 			<List.Subheader>Results:</List.Subheader>
 			<View>
-				{report.map((item) => {
+				{report.map((item, i) => {
 					return (
-						<View>
+						<View key={`${i}-${item}`}>
 							<Text
 								style={
 									item.isCorrect
