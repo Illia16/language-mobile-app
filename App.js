@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Provider as PaperProvider, Button, RadioButton, Text } from 'react-native-paper';
+import { Provider as PaperProvider, Button } from 'react-native-paper';
+
+// Components
+import RadioButtons from './components/mainMenu/RadioButtons';
 import Lesson from './components/Lesson';
-import { containerCss, buttonCss, radioContainerCss } from './styles/global';
 import { sentenceBuilderArr } from './helpers/helpers.js';
+// styles
+import { containerCss, buttonCss } from './styles/global';
+
 
 const App = () => {
 	const [data, setData] = useState(null);
@@ -223,7 +228,7 @@ const App = () => {
 						setStarted={setStarted}
 					/>
 				) : (
-					<View>
+					<View style={{ alignItems: "center" }}>
 						<Button
 							mode='contained'
 							loading={loading}
@@ -248,71 +253,15 @@ const App = () => {
 							Update data
 						</Button>
 
-						{filteredData && filteredData.length ? (
-                            <View style={styles.radioContainer}>
-                                <RadioButton.Group onValueChange={handleMode} value={mode}>
-                                    <Text>Mode</Text>
-                                    <View>
-                                        <Text>Word - Translation</Text>
-                                        <RadioButton value={'wordTranslation'} />
-                                    </View>
-                                    <View>
-                                        <Text>Translation - Word</Text>
-                                        <RadioButton value={'translationWord'}/>
-                                    </View>
-                                    <View>
-                                        <Text>Word - Translation Multiple Choice</Text>
-                                        <RadioButton value={'wordTranslationMPChoice'}/>
-                                    </View>
-                                    <View>
-                                        <Text>Translation - Word Multiple Choice</Text>
-                                        <RadioButton value={'translationWordMPChoice'} />
-                                    </View>
-                                    <View>
-                                        <Text>Sentence Builder: Word - Translation</Text>
-                                        <RadioButton value={'sentenceWordTranslation'} />
-                                    </View>
-                                    <View>
-                                        <Text>Sentence Builder: Translation - Word</Text>
-                                        <RadioButton value={'sentenceTranslationWord'}/>
-                                    </View>
-                                    <View>
-                                        <Text>Random</Text>
-                                        <RadioButton value={'random'} />
-                                    </View>
-                                </RadioButton.Group>
-
-                                <RadioButton.Group onValueChange={setNumQuestions} value={numQuestions}>
-                                    <Text>Select number of questions</Text>
-                                    {filteredData.length >= 10 &&
-                                        <View>
-                                            <Text>10</Text>
-                                            <RadioButton value={10} />
-                                        </View>
-                                    }
-                                    {filteredData.length >= 20 &&
-                                        <View>
-                                            <Text>20</Text>
-                                            <RadioButton value={20} />
-                                        </View>
-                                    }
-                                    {filteredData.length >= 30 &&
-                                        <View>
-                                            <Text>30</Text>
-                                            <RadioButton value={30} />
-                                        </View>
-                                    }
-                                    <View>
-                                        <Text>{Math.round(filteredData.length/2)}</Text>
-                                        <RadioButton value={Math.round(filteredData.length / 2)} />
-                                    </View>
-                                    <View>
-                                        <Text>{filteredData.length}</Text>
-                                        <RadioButton value={filteredData.length} />
-                                    </View>
-                                </RadioButton.Group>
-							</View>
-						) : null}
+						{filteredData && filteredData.length && (
+                            <RadioButtons
+                                handleMode={handleMode}
+                                mode={mode}
+                                setNumQuestions={setNumQuestions}
+                                numQuestions={numQuestions}
+                                filteredData={filteredData}
+                            />
+						)}
 
 						<Button
 							mode='contained'
@@ -336,9 +285,6 @@ const styles = StyleSheet.create({
 	container: {
 		...containerCss,
 	},
-    radioContainer: {
-        ...radioContainerCss,
-    },
 	buttonDefault: {
 		...buttonCss.default,
 	},
