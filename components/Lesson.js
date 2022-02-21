@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { Button, Text, useTheme } from 'react-native-paper';
 import { getLesson, getQuestion, isCorrect } from '../helpers/helpers.js';
 
 // Question-related components
@@ -21,6 +21,8 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 	const [numOfCorrectAnswers, setNumOfCorrectAnswers] = useState(0);
 	const [report, setReport] = useState([]);
 	const [lessonDone, setLessonDone] = useState(null);
+
+    const { colors } = useTheme();
 
 	// handling incorrect, correct answers and if no more questions, stopping the lesson
 	const check = () => {
@@ -73,12 +75,53 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 		}
 	}, [lessonData, currentQuestionNum]);
 
+
+
+    const styles = StyleSheet.create({
+        container: {
+            width: '100%',
+            flex: 1,
+            justifyContent: 'center',
+        },
+        btnDefault: {
+            height: 50,
+            justifyContent: 'center',
+            backgroundColor: colors.accent,
+            marginTop: 10,
+        },
+        btnDisabled: {
+            height: 50,
+            justifyContent: 'center',
+            backgroundColor: colors.disabled,
+            opacity: 0.3,
+            marginTop: 10,
+        },
+        textColor: {
+            color: colors.textBtn,
+        },
+        currentQuestion: {
+            alignItems: 'center',
+            textAlign: 'center'
+        },
+        question: {
+            marginTop: 20,
+            marginBottom: 20,
+            fontSize: 40,
+            alignItems: 'center',
+            textAlign: 'center'
+        },
+        mt40: {
+            marginTop: 40,
+        }
+    });
+
+
 	return (
-		<View>
+		<View style={{width: '80%', flex: 1}}>
 			{lessonData && lessonData.length && !lessonDone ? (
-				<View>
-					<Text>Current question {currentQuestionNum}</Text>
-					<Text>{currentQuestion.question}</Text>
+				<View style={styles.container}>
+					<Text style={styles.currentQuestion}>Current question {currentQuestionNum}</Text>
+					<Text style={styles.question}>{currentQuestion.question}</Text>
 
 					<QuestionMsgCorrectOrIncorrect
 						currentQuestionAnswered={currentQuestionAnswered}
@@ -113,28 +156,30 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
                         />
 					)}
 
-					<Button
-						onPress={check}
-						style={
-							!userAnswer || currentQuestionAnswered
-								? btnStyles.disabled
-								: btnStyles.default
-						}
-						disabled={!userAnswer || currentQuestionAnswered}>
-						<Text>Check</Text>
-					</Button>
-					{!lessonDone && (
-						<Button
-							onPress={nextQuestion}
-							style={
-								!currentQuestionAnswered
-									? btnStyles.disabled
-									: btnStyles.default
-							}
-							disabled={!currentQuestionAnswered}>
-							<Text>Next Q</Text>
-						</Button>
-					)}
+                    <View style={styles.mt40}>
+                        <Button
+                            onPress={check}
+                            style={
+                                !userAnswer || currentQuestionAnswered
+                                    ? styles.btnDisabled
+                                    : styles.btnDefault
+                            }
+                            btnDisabled={!userAnswer || currentQuestionAnswered}>
+                            <Text style={styles.textColor}>Check</Text>
+                        </Button>
+                        {!lessonDone && (
+                            <Button
+                                onPress={nextQuestion}
+                                style={
+                                    !currentQuestionAnswered
+                                        ? styles.btnDisabled
+                                        : styles.btnDefault
+                                }
+                                btnDisabled={!currentQuestionAnswered}>
+                                <Text style={styles.textColor}>Next Q</Text>
+                            </Button>
+                        )}
+                    </View>
 				</View>
 			) : null}
 
@@ -146,14 +191,3 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
 };
 
 export default Lesson;
-
-const btnStyles = StyleSheet.create({
-	default: {
-		backgroundColor: 'blue',
-		marginTop: 10,
-	},
-	disabled: {
-		backgroundColor: 'grey',
-		marginTop: 10,
-	},
-});

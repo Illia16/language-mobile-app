@@ -5,7 +5,7 @@ import { isCorrect } from '../../helpers/helpers.js';
 
 const QuestionMsgCorrectOrIncorrect = ({ currentQuestionAnswered, currentQuestion, userAnswer }) => {
 	return (
-		<View>
+		<View style={{minHeight: 50, marginBottom: 20}}>
 			{currentQuestionAnswered && (
 				<Text
 					style={
@@ -28,11 +28,11 @@ const answeredQ = StyleSheet.create({
 	correct: {
 		fontSize: 20,
 		color: 'green',
-		padding: 10,
+        textAlign: 'center',
 	},
 	incorrect: {
 		fontSize: 20,
 		color: 'red',
-		padding: 10,
+        textAlign: 'center',
 	},
 });

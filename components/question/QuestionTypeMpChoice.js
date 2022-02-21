@@ -9,7 +9,7 @@ const QuestionTypeMpChoice = ({ setUserAnswer, userAnswer, currentQuestion, curr
 			value={userAnswer}>
 			{currentQuestion.all.map((item, i) => {
 				return (
-					<View key={`${i}-${item}`}>
+					<View key={`${i}-${item}`} style={{alignItems: 'center'}}>
 						<Text>{item}</Text>
 						<RadioButton value={item} disabled={currentQuestionAnswered} />
 					</View>

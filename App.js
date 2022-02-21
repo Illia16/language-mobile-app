@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Provider as PaperProvider, Button } from 'react-native-paper';
+import { StyleSheet, View, ScrollView } from 'react-native';
+import { DefaultTheme, Provider as PaperProvider, Button } from 'react-native-paper';
 
 // Components
 import RadioButtons from './components/mainMenu/RadioButtons';
@@ -132,7 +132,7 @@ const App = () => {
         // usefull for styling quetions, remove later
         // setTimeout(() => {
         //     setNumQuestions('3');
-        //     setMode('wordTranslation');
+        //     setMode('sentenceWordTranslation');
         //     setStarted(true);
         // }, 300);
 	}, []);
@@ -217,66 +217,93 @@ const App = () => {
         }
     }
 
+    const theme = {
+        ...DefaultTheme,
+        roundness: 2,
+        colors: {
+            ...DefaultTheme.colors,
+            primary: '#1a203a',
+            accent: '#1a203a',
+            background: '#f9f4f2',
+            text: '#1a203a',
+            textBtn: '#ffffff',
+            disabled: 'grey'
+        },
+        container: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#f9f4f2',
+            paddingTop: 50,
+            paddingBottom: 50,
+        },
+        center: {
+            alignItems: 'center',
+        }
+    }
+
 	return (
-		<PaperProvider>
-			<View style={styles.container}>
-				{started ? (
-					<Lesson
-						data={filteredData}
-						numQuestions={numQuestions}
-						mode={mode}
-						setStarted={setStarted}
-					/>
-				) : (
-					<View style={{ alignItems: "center" }}>
-						<Button
-							mode='contained'
-							loading={loading}
-							style={styles.buttonDefault}
-							onPress={fetchData}>
-							Get the data
-						</Button>
+		<PaperProvider theme={theme}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <View style={{...theme.container}}>
+                    {started ? (
+                        <Lesson
+                            data={filteredData}
+                            numQuestions={numQuestions}
+                            mode={mode}
+                            setStarted={setStarted}
+                        />
+                    ) : (
+                        <View style={{...theme.center}}>
+                            <Button
+                                mode='contained'
+                                loading={loading}
+                                style={styles.buttonDefault}
+                                onPress={fetchData}>
+                                Get the data
+                            </Button>
 
-						<Button
-							mode='contained'
-							loading={loading}
-							style={styles.buttonDefault}
-							onPress={postData}>
-							Post the data
-						</Button>
+                            <Button
+                                mode='contained'
+                                loading={loading}
+                                style={styles.buttonDefault}
+                                onPress={postData}>
+                                Post the data
+                            </Button>
 
-						<Button
-							mode='contained'
-							loading={loading}
-							style={styles.buttonDefault}
-							onPress={updateItem}>
-							Update data
-						</Button>
+                            <Button
+                                mode='contained'
+                                loading={loading}
+                                style={styles.buttonDefault}
+                                onPress={updateItem}>
+                                Update data
+                            </Button>
 
-						{filteredData && filteredData.length && (
-                            <RadioButtons
-                                handleMode={handleMode}
-                                mode={mode}
-                                setNumQuestions={setNumQuestions}
-                                numQuestions={numQuestions}
-                                filteredData={filteredData}
-                            />
-						)}
+                            {filteredData && filteredData.length && (
+                                <RadioButtons
+                                    handleMode={handleMode}
+                                    mode={mode}
+                                    setNumQuestions={setNumQuestions}
+                                    numQuestions={numQuestions}
+                                    filteredData={filteredData}
+                                />
+                            )}
 
-						<Button
-							mode='contained'
-							style={
-								!numQuestions || !mode
-									? styles.buttonDisabled
-									: styles.buttonDefault
-							}
-							onPress={startGame}
-                            disabled={!numQuestions || !mode}>
-							Start
-						</Button>
-					</View>
-				)}
-			</View>
+                            <Button
+                                mode='contained'
+                                style={
+                                    !numQuestions || !mode
+                                        ? styles.buttonDisabled
+                                        : styles.buttonDefault
+                                }
+                                onPress={startGame}
+                                disabled={!numQuestions || !mode}>
+                                Start
+                            </Button>
+                        </View>
+                    )}
+                </View>
+            </ScrollView>
 		</PaperProvider>
 	);
 }

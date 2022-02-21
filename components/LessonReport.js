@@ -1,8 +1,10 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Text, List } from 'react-native-paper';
+import { Button, Text, List, useTheme } from 'react-native-paper';
 
 const LessonReport = ({ report, setStarted }) => {
+    const { colors } = useTheme();
+
 	return (
 		<List.Section>
 			<List.Subheader>Results:</List.Subheader>
@@ -40,7 +42,7 @@ const LessonReport = ({ report, setStarted }) => {
 			</View>
 
 			<Button onPress={() => setStarted(false)} style={btnStyles.default}>
-				<Text>Back to menu</Text>
+				<Text style={{color: colors.textBtn}}>Back to menu</Text>
 			</Button>
 		</List.Section>
 	);
@@ -61,7 +63,7 @@ const reportStyles = StyleSheet.create({
 
 const btnStyles = StyleSheet.create({
 	default: {
-		backgroundColor: 'blue',
+		backgroundColor: '#1a203a',
 		marginTop: 10,
 	},
 	disabled: {

@@ -10,14 +10,13 @@ export const containerCss = {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'orange',
 }
 
 export const buttonCss = {
 	default: {
         ...mt10,
         ...w75,
-		backgroundColor: 'blue',
+		backgroundColor: '#1a203a',
 	},
 	disabled: {
         ...mt10,
