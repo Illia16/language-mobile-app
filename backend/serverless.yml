@@ -38,6 +38,17 @@ resources:
   - ${file(dynamodb/dist.yml)}
 
 functions:
+  auth:
+    name: language-app-auth
+    handler: api/auth/index.handler
+    description: auth
+    memorySize: 128
+    timeout: 5
+    events:
+      - http:
+          path: api/auth
+          method: post
+          cors: true
   getTable:
     name: language-app-get-item
     handler: api/getItem/index.handler

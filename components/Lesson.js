@@ -164,7 +164,7 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
                                     ? styles.btnDisabled
                                     : styles.btnDefault
                             }
-                            btnDisabled={!userAnswer || currentQuestionAnswered}>
+                            disabled={!userAnswer || currentQuestionAnswered}>
                             <Text style={styles.textColor}>Check</Text>
                         </Button>
                         {!lessonDone && (
@@ -175,7 +175,7 @@ const Lesson = ({ data, numQuestions, mode, setStarted }) => {
                                         ? styles.btnDisabled
                                         : styles.btnDefault
                                 }
-                                btnDisabled={!currentQuestionAnswered}>
+                                disabled={!currentQuestionAnswered}>
                                 <Text style={styles.textColor}>Next Q</Text>
                             </Button>
                         )}

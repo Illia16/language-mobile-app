@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
-import { DefaultTheme, Provider as PaperProvider, Button } from 'react-native-paper';
+import { DefaultTheme, Provider as PaperProvider, Button, TextInput, Modal, Portal, Text } from 'react-native-paper';
 
 // Components
+import PostItem from './components/mainMenu/PostItem';
 import RadioButtons from './components/mainMenu/RadioButtons';
 import Lesson from './components/Lesson';
 import { sentenceBuilderArr } from './helpers/helpers.js';
@@ -11,9 +12,14 @@ import { containerCss, buttonCss } from './styles/global';
 
 
 const App = () => {
+    // auth
+	const [userPW, setUserPW] = useState('');
+	const [authorized, setAuthorized] = useState(true);
+    // data
 	const [data, setData] = useState(null);
 	const [filteredData, setFilteredData] = useState(null);
 
+    // logic
 	const [started, setStarted] = useState(false);
 	const [loading, setLoading] = useState(false);
 	// main menu states
@@ -22,120 +28,141 @@ const App = () => {
 	// api error state
 	const [errorApi, setErrorApi] = useState(false);
 
-	useEffect(() => {
-		// fetchData()
-		setData([
-            {
-                id: '1-11',
-                level: 0,
-                wordData: {
-                    word: '我',
-                    translation: 'I',
-                    transcription: 'wo3'
-                },
-                isSentense: false
-            },
-            {
-                id: '1-1',
-                level: 0,
-                wordData: {
-                    word: '一',
-                    translation: 'one',
-                    transcription: 'yi1'
-                },
-                isSentense: false
-            },
-            {
-                id: '1-2',
-                level: 0,
-                wordData: {
-                    word: '二',
-                    translation: 'two',
-                    transcription: 'er4'
-                },
-                isSentense: false
-            },
-            {
-                id: '1-3',
-                level: 0,
-                wordData: {
-                    word: '你好',
-                    translation: 'Hello',
-                    transcription: ' ni3hao3'
-                },
-                isSentense: true
-            },
-            {
-                id: '1-4',
-                level: 0,
-                wordData: {
-                    word: '你叫什么?',
-                    translation: 'What is your name?',
-                    transcription: 'ni3 jiao4 shen me?'
-                },
-                isSentense: true
-            },
-		]);
-        setFilteredData([
-            {
-                id: '1-11',
-                level: 0,
-                wordData: {
-                    word: '我',
-                    translation: 'I',
-                    transcription: 'wo3'
-                },
-                isSentense: false
-            },
-            {
-                id: '1-1',
-                level: 0,
-                wordData: {
-                    word: '一',
-                    translation: 'one',
-                    transcription: 'yi1'
-                },
-                isSentense: false
-            },
-            {
-                id: '1-2',
-                level: 0,
-                wordData: {
-                    word: '二',
-                    translation: 'two',
-                    transcription: 'er4'
-                },
-                isSentense: false
-            },
-            {
-                id: '1-3',
-                level: 0,
-                wordData: {
-                    word: '你好',
-                    translation: 'Hello',
-                    transcription: ' ni3hao3'
-                },
-                isSentense: true
-            },
-            {
-                id: '1-4',
-                level: 0,
-                wordData: {
-                    word: '你叫什么?',
-                    translation: 'What is your name?',
-                    transcription: 'ni3 jiao4 shen me?'
-                },
-                isSentense: true
-            },
-		]);
+    // post item
+    const [post, setPost] = useState({visible: false, item: {id: '', word: '', translation: '', transcription: '', isSentense: false}});
 
-        // usefull for styling quetions, remove later
-        // setTimeout(() => {
-        //     setNumQuestions('3');
-        //     setMode('sentenceWordTranslation');
-        //     setStarted(true);
-        // }, 300);
-	}, []);
+	// useEffect(() => {
+	// 	// fetchData()
+	// 	setData([
+    //         {
+    //             id: '1-11',
+    //             level: 0,
+    //             wordData: {
+    //                 word: '我',
+    //                 translation: 'I',
+    //                 transcription: 'wo3'
+    //             },
+    //             isSentense: false
+    //         },
+    //         {
+    //             id: '1-1',
+    //             level: 0,
+    //             wordData: {
+    //                 word: '一',
+    //                 translation: 'one',
+    //                 transcription: 'yi1'
+    //             },
+    //             isSentense: false
+    //         },
+    //         {
+    //             id: '1-2',
+    //             level: 0,
+    //             wordData: {
+    //                 word: '二',
+    //                 translation: 'two',
+    //                 transcription: 'er4'
+    //             },
+    //             isSentense: false
+    //         },
+    //         {
+    //             id: '1-3',
+    //             level: 0,
+    //             wordData: {
+    //                 word: '你好',
+    //                 translation: 'Hello',
+    //                 transcription: ' ni3hao3'
+    //             },
+    //             isSentense: true
+    //         },
+    //         {
+    //             id: '1-4',
+    //             level: 0,
+    //             wordData: {
+    //                 word: '你叫什么?',
+    //                 translation: 'What is your name?',
+    //                 transcription: 'ni3 jiao4 shen me?'
+    //             },
+    //             isSentense: true
+    //         },
+	// 	]);
+    //     setFilteredData([
+    //         {
+    //             id: '1-11',
+    //             level: 0,
+    //             wordData: {
+    //                 word: '我',
+    //                 translation: 'I',
+    //                 transcription: 'wo3'
+    //             },
+    //             isSentense: false
+    //         },
+    //         {
+    //             id: '1-1',
+    //             level: 0,
+    //             wordData: {
+    //                 word: '一',
+    //                 translation: 'one',
+    //                 transcription: 'yi1'
+    //             },
+    //             isSentense: false
+    //         },
+    //         {
+    //             id: '1-2',
+    //             level: 0,
+    //             wordData: {
+    //                 word: '二',
+    //                 translation: 'two',
+    //                 transcription: 'er4'
+    //             },
+    //             isSentense: false
+    //         },
+    //         {
+    //             id: '1-3',
+    //             level: 0,
+    //             wordData: {
+    //                 word: '你好',
+    //                 translation: 'Hello',
+    //                 transcription: ' ni3hao3'
+    //             },
+    //             isSentense: true
+    //         },
+    //         {
+    //             id: '1-4',
+    //             level: 0,
+    //             wordData: {
+    //                 word: '你叫什么?',
+    //                 translation: 'What is your name?',
+    //                 transcription: 'ni3 jiao4 shen me?'
+    //             },
+    //             isSentense: true
+    //         },
+	// 	]);
+
+    //     // usefull for styling quetions, remove later
+    //     // setTimeout(() => {
+    //     //     setNumQuestions('3');
+    //     //     setMode('sentenceWordTranslation');
+    //     //     setStarted(true);
+    //     // }, 300);
+	// }, []);
+
+    const auth = async () => {
+		try {
+			fetch('auth', {
+				method: 'POST',
+				body: JSON.stringify({user: userPW}),
+			})
+				.then((res) => res.json())
+				.then((data) => {
+					console.log('data from auth', data);
+                    setAuthorized(true);
+                    setData(data);
+                    setFilteredData(data);
+				});
+		} catch (er) {
+			console.error(er);
+		}
+	};
 
 	const fetchData = async () => {
 		setLoading(true);
@@ -153,29 +180,6 @@ const App = () => {
 		} catch (er) {
 			setLoading(false);
 			console.error('er', er);
-		}
-	};
-	const postData = async () => {
-		try {
-			fetch('postItemAPI', {
-				method: 'POST',
-				body: JSON.stringify({
-                    id: '1-11',
-					level: 0,
-					wordData: {
-                        word: '我',
-                        translation: 'I',
-                        transcription: 'wo3'
-                    },
-                    isSentense: false
-				}),
-			})
-				.then((res) => res.json())
-				.then((data) => {
-					console.log('data from post', data);
-				});
-		} catch (er) {
-			console.error(er);
 		}
 	};
 
@@ -253,7 +257,7 @@ const App = () => {
                             mode={mode}
                             setStarted={setStarted}
                         />
-                    ) : (
+                    ) : (authorized && data && data.length ?
                         <View style={{...theme.center}}>
                             <Button
                                 mode='contained'
@@ -267,7 +271,7 @@ const App = () => {
                                 mode='contained'
                                 loading={loading}
                                 style={styles.buttonDefault}
-                                onPress={postData}>
+                                onPress={() => setPost({...post, visible: true})}>
                                 Post the data
                             </Button>
 
@@ -300,7 +304,28 @@ const App = () => {
                                 disabled={!numQuestions || !mode}>
                                 Start
                             </Button>
+
+
+                            <PostItem post={post} setPost={setPost} />
                         </View>
+                        : (
+                            <View style={{flex: 1, justifyContent:'center', maxHeight: 75, width: 150, ...theme.center}}>
+                                <Button
+                                    mode='contained'
+                                    loading={loading}
+                                    style={styles.buttonDefault}
+                                    onPress={auth}
+                                >
+                                    Auth
+                                </Button>
+                                <TextInput
+                                    style={{maxHeight: 75, width: 150, textAlign: 'center', marginTop: 20}}
+                                    placeholder='enter pw here'
+                                    value={userPW}
+                                    onChangeText={setUserPW}
+                                />
+                            </View>
+                        )
                     )}
                 </View>
             </ScrollView>
